@@ -1,0 +1,6 @@
+Zip file check
+Hash comparison met server files (Niet in zip)
+Alles zippen en dan comparen met server files
+
+server geeft hash van laatste versie in php plain text
+launcher compared client's zip met die hash

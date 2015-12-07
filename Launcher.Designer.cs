@@ -23,12 +23,15 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             this.playButton = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.webBrowser = new System.Windows.Forms.WebBrowser();
             this.forumButton = new System.Windows.Forms.Button();
             this.youtubeButton = new System.Windows.Forms.Button();
             this.facebookButton = new System.Windows.Forms.Button();
+            this.progressLabel = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // playButton
@@ -47,9 +50,9 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 424);
+            this.progressBar1.Location = new System.Drawing.Point(12, 444);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(544, 50);
+            this.progressBar1.Size = new System.Drawing.Size(544, 30);
             this.progressBar1.TabIndex = 1;
             // 
             // webBrowser
@@ -90,11 +93,23 @@
             this.facebookButton.UseVisualStyleBackColor = true;
             this.facebookButton.Click += new System.EventHandler(this.facebookButton_Click);
             // 
+            // progressLabel
+            // 
+            this.progressLabel.AutoSize = true;
+            this.progressLabel.BackColor = System.Drawing.Color.Transparent;
+            this.progressLabel.Location = new System.Drawing.Point(12, 428);
+            this.progressLabel.Name = "progressLabel";
+            this.progressLabel.Size = new System.Drawing.Size(63, 13);
+            this.progressLabel.TabIndex = 6;
+            this.progressLabel.Text = "Up-To-Date";
+            this.progressLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Launcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(681, 486);
+            this.Controls.Add(this.progressLabel);
             this.Controls.Add(this.facebookButton);
             this.Controls.Add(this.youtubeButton);
             this.Controls.Add(this.forumButton);
@@ -105,6 +120,7 @@
             this.Text = "Launcher v0.0.1";
             this.Load += new System.EventHandler(this.Launcher_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -116,6 +132,8 @@
         private System.Windows.Forms.Button forumButton;
         private System.Windows.Forms.Button youtubeButton;
         private System.Windows.Forms.Button facebookButton;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label progressLabel;
     }
 }
 

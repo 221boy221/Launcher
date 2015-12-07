@@ -7,6 +7,3 @@ c:\users\boy\documents\visual studio 2015\Projects\Launcher\bin\Debug\Launcher.p
 c:\users\boy\documents\visual studio 2015\Projects\Launcher\obj\Debug\Launcher.Launcher.resources
 c:\users\boy\documents\visual studio 2015\Projects\Launcher\obj\Debug\Launcher.exe
 c:\users\boy\documents\visual studio 2015\Projects\Launcher\obj\Debug\Launcher.pdb
-D:\Visual Studio 2015\Launcher\bin\Debug\Launcher.exe.config
-D:\Visual Studio 2015\Launcher\obj\Debug\Launcher.exe
-D:\Visual Studio 2015\Launcher\obj\Debug\Launcher.pdb

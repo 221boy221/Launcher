@@ -8,11 +8,17 @@ using System.IO.Compression;
 using System.Drawing;
 using System.Security.Cryptography;
 
+// Boy Voesten
+// TODO: 
+//      Replace hardcoded file paths
+//      Repair game function (with progressbar)
+//      
+
 namespace Launcher {
     public partial class Launcher : Form {
         
         string _gameExe = "spaceshooter.exe";
-        string _fileVersion = "game.version";
+        string _versionFile = "game.version";
         string _currentVersion = "";
         string _serverVersion;
         string _serverURL = "http://localhost/GetVersion.php";
@@ -24,12 +30,13 @@ namespace Launcher {
         long _byteIndex;
         long _bytesTotal;
         int _progressValue;
-
+        private string _serverMD5;
+        private bool _UpdateAvailable = false;
 
         public Launcher() {
             InitializeComponent();
             _gameExe = Application.StartupPath + "/game/" + _gameExe;
-            _fileVersion = Application.StartupPath + "/game/" + _fileVersion;
+            _versionFile = Application.StartupPath + "/game/" + _versionFile;
             // Timer for drawing ProgressBar UI
             _renderTimer = new Timer();
             _renderTimer.Interval = 10;
@@ -37,28 +44,33 @@ namespace Launcher {
         }
 
         private void Launcher_Load(object sender, EventArgs e) {
-
             // Check and save current version
-            if (File.Exists(_fileVersion)) {
-                _currentVersion = File.ReadAllText(_fileVersion);
-            }
+            if (File.Exists(_versionFile))
+                _currentVersion = File.ReadAllText(_versionFile);
 
-            // Connect with server to get serverVersion
-            WebRequest webReq = WebRequest.Create(_serverURL);
-            WebResponse webRes = webReq.GetResponse();
-            StreamReader StrReader = new StreamReader(webRes.GetResponseStream());
-            _serverVersion = StrReader.ReadToEnd();
+            // Get the latest version number
+            GetServerVersion();
 
-            Console.WriteLine(_serverVersion);
+            // Compare client version with server version
+            CheckForUpdates();
 
-            // Check if your version is outdated or not
-            if (_serverVersion != _currentVersion) {
-                Console.WriteLine("There is a new version available!");
-                Download();
+        }
+
+        // Check if the client requires an update
+        private void CheckForUpdates() {
+            if (_currentVersion != _serverVersion) {
+                progressLabel.Text = "There is a new version available!";
+                Console.WriteLine(progressLabel.Text);
+                _UpdateAvailable = true;
+                playButton.Text = "Update";
             } else {
-                Console.WriteLine("You are Up-To-Date!");
-                playButton.Enabled = true;
+                progressLabel.Text = "You are Up-To-Date";
+                Console.WriteLine(progressLabel.Text);
+                _UpdateAvailable = false;
+                playButton.Text = "Play";
             }
+            // After all the checks, turn the button on
+            playButton.Enabled = true;
         }
 
         // Download new version
@@ -66,6 +78,9 @@ namespace Launcher {
             _renderTimer.Start();
             _fileToDownload = _serverPatchURL + _serverVersion + ".zip";
             _downloadedFile = Application.StartupPath + "/game/" + _serverVersion + ".zip";
+
+            if (File.Exists(_downloadedFile))
+                File.Delete(_downloadedFile);
 
             Console.WriteLine("Starting download...");
 
@@ -76,24 +91,30 @@ namespace Launcher {
             client.DownloadFileAsync(new Uri(_fileToDownload), _downloadedFile);
         }
 
+        // Update client feedback
         private void DownloadProgression(object sender, DownloadProgressChangedEventArgs e) {
             _progressValue = e.ProgressPercentage;
             _byteIndex = e.BytesReceived;
             _bytesTotal = e.TotalBytesToReceive;
         }
 
+        // Done downloading
         private void DownloadComplete(object sender, AsyncCompletedEventArgs e) {
             Console.WriteLine("Download Completed");
-            // Update local version number
+            // Update client version number
             _currentVersion = _serverVersion;
-            File.WriteAllText(_fileVersion, _currentVersion);
+            File.WriteAllText(_versionFile, _currentVersion);
 
             // Update UI
             UpdateUI();
 
             // Extract downloaded ZIP
             progressLabel.Text = "Extracting Files...";
+            // FIX "ALREADY EXISTS" ERROR
             ZipFile.ExtractToDirectory(_downloadedFile, Application.StartupPath + "/game/");
+            /*using (ZipFile zip = ZipFile.Read(pathBackup)) {
+                zip.ExtractAll(Environment.CurrentDirectory, ExtractExistingFileAction.OverwriteSilently);
+            }*/
             progressLabel.Text = "Update Complete";
             
             // Remove ZIP after Extracting
@@ -101,10 +122,14 @@ namespace Launcher {
             _renderTimer.Stop();
         }
 
+        // Used to Repair the game files
         private void CheckFiles() {
             _fileToDownload = _serverPatchURL + _serverVersion + ".zip";
             string zipFileLoc = Application.StartupPath + "/temp.zip";
-            
+
+            if (File.Exists(zipFileLoc))
+                File.Delete(zipFileLoc);
+
             ZipFile.CreateFromDirectory(Application.StartupPath + "/game/", zipFileLoc);
             Application.DoEvents();
 
@@ -119,7 +144,8 @@ namespace Launcher {
             FileStream streamClient = File.OpenRead(client);
             FileStream streamServer = File.OpenRead(server);
 
-            if (md5.ComputeHash(streamClient) == md5.ComputeHash(streamServer)) {
+            Console.WriteLine(md5.ComputeHash(streamClient).ToString());
+            if (md5.ComputeHash(streamClient).ToString() == _serverMD5) {
                 Console.WriteLine("Hashes are the same - Files up to date!");
                 return true;
             } else {
@@ -127,6 +153,26 @@ namespace Launcher {
                 return false;
             }
 
+        }
+
+        // Gets the Version and MD5 of the latest patch
+        private void GetServerVersion() {
+            char[] ignoreChars = {'-'};
+            string text;
+            string[] data;
+
+            WebRequest webReq = WebRequest.Create(_serverURL);
+            WebResponse webRes = webReq.GetResponse();
+            StreamReader StrReader = new StreamReader(webRes.GetResponseStream());
+            text = StrReader.ReadToEnd();
+
+            data = text.Split(ignoreChars);
+            _serverVersion = data[1];
+            _serverMD5 = data[2];
+
+            Console.WriteLine("webText: " + text);
+            Console.WriteLine("Server Version: " + _serverVersion);
+            Console.WriteLine("Server MD5: " + _serverMD5);
         }
 
         // Update UI
@@ -165,6 +211,12 @@ namespace Launcher {
         // Clicks
 
         private void playButton_Click(object sender, EventArgs e) {
+            // Download instead of play
+            if (_UpdateAvailable) {
+                Download();
+                return;
+            }
+
             // Play game
             Process.Start(_gameExe);
             Application.Exit();

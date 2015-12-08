@@ -1,0 +1,17 @@
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\Launcher.exe.config
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\Launcher.exe
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\Launcher.pdb
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\CefSharp.Core.dll
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\CefSharp.dll
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\CefSharp.WinForms.dll
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\ImprovedCompression.dll
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\ImprovedCompression.pdb
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\CefSharp.WinForms.xml
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\CefSharp.xml
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\x86\Debug\CefSharp.Core.xml
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\obj\x86\Debug\Launcher.csprojResolveAssemblyReference.cache
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\obj\x86\Debug\Launcher.Launcher.resources
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\obj\x86\Debug\Launcher.Properties.Resources.resources
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\obj\x86\Debug\Launcher.csproj.GenerateResource.Cache
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\obj\x86\Debug\Launcher.exe
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\obj\x86\Debug\Launcher.pdb

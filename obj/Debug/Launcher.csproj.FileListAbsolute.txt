@@ -7,3 +7,5 @@ c:\users\boy\documents\visual studio 2015\Projects\Launcher\bin\Debug\Launcher.p
 c:\users\boy\documents\visual studio 2015\Projects\Launcher\obj\Debug\Launcher.Launcher.resources
 c:\users\boy\documents\visual studio 2015\Projects\Launcher\obj\Debug\Launcher.exe
 c:\users\boy\documents\visual studio 2015\Projects\Launcher\obj\Debug\Launcher.pdb
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\Debug\ImprovedCompression.dll
+C:\Users\Boy\Documents\Visual Studio 2015\Projects\Launcher\bin\Debug\ImprovedCompression.pdb

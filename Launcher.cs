@@ -4,9 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.ComponentModel;
-using System.IO.Compression;
 using System.Drawing;
 using System.Security.Cryptography;
+using System.IO.Compression;
+using ExtendedZipFiles;
 
 // Boy Voesten
 // TODO: 
@@ -110,11 +111,10 @@ namespace Launcher {
 
             // Extract downloaded ZIP
             progressLabel.Text = "Extracting Files...";
-            // FIX "ALREADY EXISTS" ERROR
-            ZipFile.ExtractToDirectory(_downloadedFile, Application.StartupPath + "/game/");
-            /*using (ZipFile zip = ZipFile.Read(pathBackup)) {
-                zip.ExtractAll(Environment.CurrentDirectory, ExtractExistingFileAction.OverwriteSilently);
-            }*/
+
+            //ZipFile.ExtractToDirectory(_downloadedFile, Application.StartupPath + "/game/");
+            Compression.ImprovedExtractToDirectory(_downloadedFile, Application.StartupPath + "/game/", Compression.Overwrite.Always);
+
             progressLabel.Text = "Update Complete";
             
             // Remove ZIP after Extracting
@@ -127,10 +127,10 @@ namespace Launcher {
             _fileToDownload = _serverPatchURL + _serverVersion + ".zip";
             string zipFileLoc = Application.StartupPath + "/temp.zip";
 
-            if (File.Exists(zipFileLoc))
-                File.Delete(zipFileLoc);
+            GetServerVersion();
 
             ZipFile.CreateFromDirectory(Application.StartupPath + "/game/", zipFileLoc);
+
             Application.DoEvents();
 
             CompareMD5(zipFileLoc, _fileToDownload);
@@ -142,14 +142,18 @@ namespace Launcher {
 
             MD5 md5 = MD5.Create();
             FileStream streamClient = File.OpenRead(client);
-            FileStream streamServer = File.OpenRead(server);
+            string clientHash = BitConverter.ToString(md5.ComputeHash(streamClient)).Replace("-", "").ToLower();
 
-            Console.WriteLine(md5.ComputeHash(streamClient).ToString());
-            if (md5.ComputeHash(streamClient).ToString() == _serverMD5) {
-                Console.WriteLine("Hashes are the same - Files up to date!");
+            Console.WriteLine(clientHash);
+            streamClient.Close();
+
+            File.Delete(client);
+
+            if (clientHash == _serverMD5) {
+                Console.WriteLine("Hashes are the same");
                 return true;
             } else {
-                Console.WriteLine("Hashes are different, Files Out-Dated");
+                Console.WriteLine("Hashes are different");
                 return false;
             }
 
@@ -231,6 +235,5 @@ namespace Launcher {
             // Open Facebook
             CheckFiles();
         }
-
     }
 }

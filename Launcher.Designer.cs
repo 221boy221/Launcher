@@ -36,13 +36,11 @@
             // 
             // playButton
             // 
-            this.playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.playButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.playButton.Enabled = false;
-            this.playButton.Location = new System.Drawing.Point(562, 424);
+            this.playButton.Location = new System.Drawing.Point(505, 417);
             this.playButton.Name = "playButton";
-            this.playButton.Size = new System.Drawing.Size(107, 50);
+            this.playButton.Size = new System.Drawing.Size(107, 46);
             this.playButton.TabIndex = 0;
             this.playButton.Text = "Play";
             this.playButton.UseVisualStyleBackColor = true;
@@ -50,18 +48,23 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 444);
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.progressBar1.Location = new System.Drawing.Point(12, 432);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(544, 30);
+            this.progressBar1.Size = new System.Drawing.Size(487, 30);
             this.progressBar1.TabIndex = 1;
             // 
             // webBrowser
             // 
+            this.webBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.webBrowser.Location = new System.Drawing.Point(12, 56);
             this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(657, 362);
+            this.webBrowser.ScrollBarsEnabled = false;
+            this.webBrowser.Size = new System.Drawing.Size(600, 350);
             this.webBrowser.TabIndex = 2;
+            this.webBrowser.Url = new System.Uri("http://127.0.0.1/launcher", System.UriKind.Absolute);
             // 
             // forumButton
             // 
@@ -95,9 +98,10 @@
             // 
             // progressLabel
             // 
+            this.progressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.progressLabel.AutoSize = true;
             this.progressLabel.BackColor = System.Drawing.Color.Transparent;
-            this.progressLabel.Location = new System.Drawing.Point(12, 428);
+            this.progressLabel.Location = new System.Drawing.Point(12, 416);
             this.progressLabel.Name = "progressLabel";
             this.progressLabel.Size = new System.Drawing.Size(63, 13);
             this.progressLabel.TabIndex = 6;
@@ -108,7 +112,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(681, 486);
+            this.ClientSize = new System.Drawing.Size(624, 474);
             this.Controls.Add(this.progressLabel);
             this.Controls.Add(this.facebookButton);
             this.Controls.Add(this.youtubeButton);

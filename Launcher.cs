@@ -7,37 +7,41 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Security.Cryptography;
 using System.IO.Compression;
+using System.Collections.Generic;
 using ExtendedZipFiles;
 
 // Boy Voesten
 // TODO: 
-//      Replace hardcoded file paths
-//      Repair game function (with progressbar)
-//      
+//      Replace hardcoded file paths / strings
+//      Improve MD5 Repair file comparison (checksum?)
 
 namespace Launcher {
     public partial class Launcher : Form {
         
-        string _gameExe = "spaceshooter.exe";
-        string _versionFile = "game.version";
-        string _currentVersion = "";
-        string _serverVersion;
-        string _serverURL = "http://localhost/GetVersion.php";
-        string _serverPatchURL = "http://localhost/patches/";
+        private string _gameExe         = "spaceshooter.exe";
+        private string _gameDir         = Application.StartupPath + @"\game\";
+        private string _versionFile     = "game.version";
+        private string _currentVersion  = "0.0";
+        private string _serverVersion;
+        private string _serverURL       = "http://localhost/GetVersion.php";
+        private string _serverPatchURL  = "http://localhost/patches/";
+        private string _portfolio       = "http://boyvoesten.com/";
+        private string _gameSie         = "http://boyvoesten.com/projects/steammachine.php";
+        private string _github          = "https://github.com/221boy221/tower-defense";
 
-        string _fileToDownload;
-        string _downloadedFile;
-        Timer _renderTimer;
-        long _byteIndex;
-        long _bytesTotal;
-        int _progressValue;
+        private string _fileToDownload;
+        private string _downloadedFile;
+        private Timer _renderTimer;
+        private long _byteIndex;
+        private long _bytesTotal;
+        private int _progressValue;
         private string _serverMD5;
         private bool _UpdateAvailable = false;
 
         public Launcher() {
             InitializeComponent();
-            _gameExe = Application.StartupPath + "/game/" + _gameExe;
-            _versionFile = Application.StartupPath + "/game/" + _versionFile;
+            _gameExe = _gameDir + _gameExe;
+            _versionFile = _gameDir + _versionFile;
             // Timer for drawing ProgressBar UI
             _renderTimer = new Timer();
             _renderTimer.Interval = 10;
@@ -48,13 +52,12 @@ namespace Launcher {
             // Check and save current version
             if (File.Exists(_versionFile))
                 _currentVersion = File.ReadAllText(_versionFile);
-
+            
             // Get the latest version number
             GetServerVersion();
 
             // Compare client version with server version
             CheckForUpdates();
-
         }
 
         // Check if the client requires an update
@@ -65,7 +68,7 @@ namespace Launcher {
                 _UpdateAvailable = true;
                 playButton.Text = "Update";
             } else {
-                progressLabel.Text = "You are Up-To-Date";
+                progressLabel.Text = "All files are Up-To-Date";
                 Console.WriteLine(progressLabel.Text);
                 _UpdateAvailable = false;
                 playButton.Text = "Play";
@@ -78,8 +81,9 @@ namespace Launcher {
         private void Download() {
             _renderTimer.Start();
             _fileToDownload = _serverPatchURL + _serverVersion + ".zip";
-            _downloadedFile = Application.StartupPath + "/game/" + _serverVersion + ".zip";
+            _downloadedFile = _gameDir + _serverVersion + ".zip";
 
+            // In case there are leftovers from previous patches
             if (File.Exists(_downloadedFile))
                 File.Delete(_downloadedFile);
 
@@ -105,16 +109,13 @@ namespace Launcher {
             // Update client version number
             _currentVersion = _serverVersion;
             File.WriteAllText(_versionFile, _currentVersion);
-
+            
             // Update UI
             UpdateUI();
 
             // Extract downloaded ZIP
             progressLabel.Text = "Extracting Files...";
-
-            //ZipFile.ExtractToDirectory(_downloadedFile, Application.StartupPath + "/game/");
-            Compression.ImprovedExtractToDirectory(_downloadedFile, Application.StartupPath + "/game/", Compression.Overwrite.Always);
-
+            Compression.ImprovedExtractToDirectory(_downloadedFile, _gameDir, Compression.Overwrite.Always);
             progressLabel.Text = "Update Complete";
             
             // Remove ZIP after Extracting
@@ -124,38 +125,57 @@ namespace Launcher {
 
         // Used to Repair the game files
         private void CheckFiles() {
-            _fileToDownload = _serverPatchURL + _serverVersion + ".zip";
-            string zipFileLoc = Application.StartupPath + "/temp.zip";
+            string clientZip = Application.StartupPath + "\\temp.zip";
+            List<string> filesToZip = new List<string>();
 
+            progressLabel.Text = "Repairing game files - This could take a while...";
             GetServerVersion();
+            filesToZip.Add(_gameDir);
 
-            ZipFile.CreateFromDirectory(Application.StartupPath + "/game/", zipFileLoc);
+            try {
+                ZipFile.CreateFromDirectory(_gameDir, clientZip);
+                Console.WriteLine(clientZip);
+                Console.WriteLine(filesToZip);
+                //Compression.AddToArchive(clientZip, filesToZip);
+            
+            } catch (IOException) {
+                MessageBox.Show("File is already in use. \nPlease close the game before repairing it.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Make sure to remove leftovers
+                if (!File.Exists(clientZip))
+                    return;
+                File.Delete(clientZip);
+                return;
+            }
 
             Application.DoEvents();
 
-            CompareMD5(zipFileLoc, _fileToDownload);
+            if (CompareMD5(clientZip)) {
+                progressLabel.Text = "No missing files detected, everything is up-to-date.";
+                return;
+            }
+                
+
+            Console.WriteLine("Hash differs, download latest patch.");
+            Download();
         }
 
         // Check if hashes are the same
-        // TODO: Fix issue, read INFO.TXT
-        private bool CompareMD5(string client, string server) {
-
+        private bool CompareMD5(string clientZip) {
             MD5 md5 = MD5.Create();
-            FileStream streamClient = File.OpenRead(client);
+            FileStream streamClient = File.OpenRead(clientZip);
             string clientHash = BitConverter.ToString(md5.ComputeHash(streamClient)).Replace("-", "").ToLower();
 
-            Console.WriteLine(clientHash);
+            Console.WriteLine("---------- COMPARE MD5 ----------");
+            Console.WriteLine("Client: " + clientHash);
+            Console.WriteLine("Server: " + _serverMD5);
+            Console.WriteLine("---------------------------------");
+            
+
+            // Close & Clean up
             streamClient.Close();
+            File.Delete(clientZip);
 
-            File.Delete(client);
-
-            if (clientHash == _serverMD5) {
-                Console.WriteLine("Hashes are the same");
-                return true;
-            } else {
-                Console.WriteLine("Hashes are different");
-                return false;
-            }
+            return clientHash == _serverMD5;
 
         }
 
@@ -174,9 +194,10 @@ namespace Launcher {
             _serverVersion = data[1];
             _serverMD5 = data[2];
 
-            Console.WriteLine("webText: " + text);
-            Console.WriteLine("Server Version: " + _serverVersion);
-            Console.WriteLine("Server MD5: " + _serverMD5);
+            Console.WriteLine("---------- SERVER INFO ----------");
+            Console.WriteLine("Version: " + _serverVersion);
+            Console.WriteLine("MD5: " + _serverMD5);
+            Console.WriteLine("---------------------------------");
         }
 
         // Update UI
@@ -190,6 +211,7 @@ namespace Launcher {
             progressBar1.Value = _progressValue;
         }
 
+        // To show the correct file sizes
         private string FormatBytes(long bytes) {
             float data = 0;
             string byteType = "";
@@ -207,7 +229,7 @@ namespace Launcher {
                 data = bytes;
                 byteType = " Bytes";
             }
-            //Console.WriteLine("FormatBytes: " + bytes + " to " + data + byteType);
+
             return Math.Round(data, 3).ToString() + byteType;
         }
 
@@ -225,14 +247,20 @@ namespace Launcher {
             Process.Start(_gameExe);
             Application.Exit();
         }
-        private void forumButton_Click(object sender, EventArgs e) {
-            // Open Forum
+        private void portfolioButton_Click(object sender, EventArgs e) {
+            // Open Portfolio
+            Process.Start(_portfolio);
         }
-        private void youtubeButton_Click(object sender, EventArgs e) {
-            // Open YouTube
+        private void gameSiteButton_Click(object sender, EventArgs e) {
+            // Open Game Website
+            Process.Start(_gameSie);
         }
-        private void facebookButton_Click(object sender, EventArgs e) {
-            // Open Facebook
+        private void githubButton_Click(object sender, EventArgs e) {
+            // Open Source Code
+            Process.Start(_github);
+        }
+        private void repairButton_Click(object sender, EventArgs e) {
+            // Repair game files
             CheckFiles();
         }
     }

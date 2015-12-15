@@ -27,11 +27,12 @@
             this.playButton = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.webBrowser = new System.Windows.Forms.WebBrowser();
-            this.forumButton = new System.Windows.Forms.Button();
-            this.youtubeButton = new System.Windows.Forms.Button();
-            this.facebookButton = new System.Windows.Forms.Button();
+            this.portfolioButton = new System.Windows.Forms.Button();
+            this.gameSiteButton = new System.Windows.Forms.Button();
+            this.githubButton = new System.Windows.Forms.Button();
             this.progressLabel = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.repairButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // playButton
@@ -66,35 +67,35 @@
             this.webBrowser.TabIndex = 2;
             this.webBrowser.Url = new System.Uri("http://127.0.0.1/launcher", System.UriKind.Absolute);
             // 
-            // forumButton
+            // portfolioButton
             // 
-            this.forumButton.Location = new System.Drawing.Point(12, 12);
-            this.forumButton.Name = "forumButton";
-            this.forumButton.Size = new System.Drawing.Size(111, 38);
-            this.forumButton.TabIndex = 3;
-            this.forumButton.Text = "Visit Forum";
-            this.forumButton.UseVisualStyleBackColor = true;
-            this.forumButton.Click += new System.EventHandler(this.forumButton_Click);
+            this.portfolioButton.Location = new System.Drawing.Point(12, 12);
+            this.portfolioButton.Name = "portfolioButton";
+            this.portfolioButton.Size = new System.Drawing.Size(111, 38);
+            this.portfolioButton.TabIndex = 3;
+            this.portfolioButton.Text = "Portfolio";
+            this.portfolioButton.UseVisualStyleBackColor = true;
+            this.portfolioButton.Click += new System.EventHandler(this.portfolioButton_Click);
             // 
-            // youtubeButton
+            // gameSiteButton
             // 
-            this.youtubeButton.Location = new System.Drawing.Point(129, 12);
-            this.youtubeButton.Name = "youtubeButton";
-            this.youtubeButton.Size = new System.Drawing.Size(111, 38);
-            this.youtubeButton.TabIndex = 4;
-            this.youtubeButton.Text = "YouTube";
-            this.youtubeButton.UseVisualStyleBackColor = true;
-            this.youtubeButton.Click += new System.EventHandler(this.youtubeButton_Click);
+            this.gameSiteButton.Location = new System.Drawing.Point(129, 12);
+            this.gameSiteButton.Name = "gameSiteButton";
+            this.gameSiteButton.Size = new System.Drawing.Size(111, 38);
+            this.gameSiteButton.TabIndex = 4;
+            this.gameSiteButton.Text = "Game Website";
+            this.gameSiteButton.UseVisualStyleBackColor = true;
+            this.gameSiteButton.Click += new System.EventHandler(this.gameSiteButton_Click);
             // 
-            // facebookButton
+            // githubButton
             // 
-            this.facebookButton.Location = new System.Drawing.Point(246, 12);
-            this.facebookButton.Name = "facebookButton";
-            this.facebookButton.Size = new System.Drawing.Size(111, 38);
-            this.facebookButton.TabIndex = 5;
-            this.facebookButton.Text = "Facebook";
-            this.facebookButton.UseVisualStyleBackColor = true;
-            this.facebookButton.Click += new System.EventHandler(this.facebookButton_Click);
+            this.githubButton.Location = new System.Drawing.Point(246, 12);
+            this.githubButton.Name = "githubButton";
+            this.githubButton.Size = new System.Drawing.Size(111, 38);
+            this.githubButton.TabIndex = 5;
+            this.githubButton.Text = "Source Code";
+            this.githubButton.UseVisualStyleBackColor = true;
+            this.githubButton.Click += new System.EventHandler(this.githubButton_Click);
             // 
             // progressLabel
             // 
@@ -102,11 +103,23 @@
             this.progressLabel.AutoSize = true;
             this.progressLabel.BackColor = System.Drawing.Color.Transparent;
             this.progressLabel.Location = new System.Drawing.Point(12, 416);
+            this.progressLabel.MaximumSize = new System.Drawing.Size(475, 0);
+            this.progressLabel.MinimumSize = new System.Drawing.Size(100, 0);
             this.progressLabel.Name = "progressLabel";
-            this.progressLabel.Size = new System.Drawing.Size(63, 13);
+            this.progressLabel.Size = new System.Drawing.Size(116, 13);
             this.progressLabel.TabIndex = 6;
-            this.progressLabel.Text = "Up-To-Date";
-            this.progressLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.progressLabel.Text = "All files are Up-To-Date";
+            this.progressLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // repairButton
+            // 
+            this.repairButton.Location = new System.Drawing.Point(501, 12);
+            this.repairButton.Name = "repairButton";
+            this.repairButton.Size = new System.Drawing.Size(111, 38);
+            this.repairButton.TabIndex = 5;
+            this.repairButton.Text = "Repair";
+            this.repairButton.UseVisualStyleBackColor = true;
+            this.repairButton.Click += new System.EventHandler(this.repairButton_Click);
             // 
             // Launcher
             // 
@@ -114,14 +127,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 474);
             this.Controls.Add(this.progressLabel);
-            this.Controls.Add(this.facebookButton);
-            this.Controls.Add(this.youtubeButton);
-            this.Controls.Add(this.forumButton);
+            this.Controls.Add(this.repairButton);
+            this.Controls.Add(this.githubButton);
+            this.Controls.Add(this.gameSiteButton);
+            this.Controls.Add(this.portfolioButton);
             this.Controls.Add(this.webBrowser);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.playButton);
             this.Name = "Launcher";
-            this.Text = "Launcher v0.0.1";
+            this.Text = "Launcher v0.0.2";
             this.Load += new System.EventHandler(this.Launcher_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -133,11 +147,12 @@
         private System.Windows.Forms.Button playButton;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.WebBrowser webBrowser;
-        private System.Windows.Forms.Button forumButton;
-        private System.Windows.Forms.Button youtubeButton;
-        private System.Windows.Forms.Button facebookButton;
+        private System.Windows.Forms.Button portfolioButton;
+        private System.Windows.Forms.Button gameSiteButton;
+        private System.Windows.Forms.Button githubButton;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label progressLabel;
+        private System.Windows.Forms.Button repairButton;
     }
 }
 

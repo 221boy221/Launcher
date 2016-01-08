@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.ComponentModel;
-using System.Drawing;
 using System.Security.Cryptography;
 using System.IO.Compression;
 using System.Collections.Generic;
@@ -38,8 +37,19 @@ namespace Launcher {
         private string _serverMD5;
         private bool _UpdateAvailable = false;
 
+        private Games.Game _currentGame;
+        private List<Games.Game> _games = new List<Games.Game>();
+
+        private void SetGames() {
+            _games.Add(new Games.KingdomOfMadness());
+            _gameExe = _games[1].Executable;
+        }
+
         public Launcher() {
             InitializeComponent();
+
+            
+
             _gameExe = _gameDir + _gameExe;
             _versionFile = _gameDir + _versionFile;
             // Timer for drawing ProgressBar UI

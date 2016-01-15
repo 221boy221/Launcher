@@ -8,50 +8,46 @@ using System.Security.Cryptography;
 using System.IO.Compression;
 using System.Collections.Generic;
 using ExtendedZipFiles;
+using Launcher.Games;
 
 // Boy Voesten
 // TODO: 
-//      Replace hardcoded file paths / strings
+//      Replace hardcoded file paths
 //      Improve MD5 Repair file comparison (checksum?)
 
 namespace Launcher {
     public partial class Launcher : Form {
-        
-        private string _gameExe         = "spaceshooter.exe";
-        private string _gameDir         = Application.StartupPath + @"\game\";
-        private string _versionFile     = "game.version";
-        private string _currentVersion  = "0.0";
-        private string _serverVersion;
-        private string _serverURL       = "http://localhost/GetVersion.php";
-        private string _serverPatchURL  = "http://localhost/patches/";
-        private string _portfolio       = "http://boyvoesten.com/";
-        private string _gameSie         = "http://boyvoesten.com/projects/steammachine.php";
-        private string _github          = "https://github.com/221boy221/tower-defense";
 
+        private Game _currentGame;
+        private string _gameExe;
+        private string _gameDir;
+        private string _gameWeb;
+        private string _gameSource;
+        private string _serverURL;
+        private string _serverPatchURL;
+
+        private string _versionFile = "game.version";
+        private string _currentVersion = "0.0";
+        private string _serverVersion;
+        private string _portfolio = "http://boyvoesten.com/";
         private string _fileToDownload;
         private string _downloadedFile;
+        private string _serverMD5;
         private Timer _renderTimer;
+        private bool _UpdateAvailable = false;
         private long _byteIndex;
         private long _bytesTotal;
         private int _progressValue;
-        private string _serverMD5;
-        private bool _UpdateAvailable = false;
-
-        private Games.Game _currentGame;
-        private List<Games.Game> _games = new List<Games.Game>();
-
-        private void SetGames() {
-            _games.Add(new Games.KingdomOfMadness());
-            _gameExe = _games[1].Executable;
-        }
 
         public Launcher() {
             InitializeComponent();
 
-            
+            // Load default game info
+            SelectGame(new KingdomOfMadness());
 
             _gameExe = _gameDir + _gameExe;
             _versionFile = _gameDir + _versionFile;
+
             // Timer for drawing ProgressBar UI
             _renderTimer = new Timer();
             _renderTimer.Interval = 10;
@@ -62,9 +58,9 @@ namespace Launcher {
             // Check and save current version
             if (File.Exists(_versionFile))
                 _currentVersion = File.ReadAllText(_versionFile);
-            
+
             // Get the latest version number
-            GetServerVersion();
+            //GetServerVersion();
 
             // Compare client version with server version
             CheckForUpdates();
@@ -119,7 +115,7 @@ namespace Launcher {
             // Update client version number
             _currentVersion = _serverVersion;
             File.WriteAllText(_versionFile, _currentVersion);
-            
+
             // Update UI
             UpdateUI();
 
@@ -127,7 +123,7 @@ namespace Launcher {
             progressLabel.Text = "Extracting Files...";
             Compression.ImprovedExtractToDirectory(_downloadedFile, _gameDir, Compression.Overwrite.Always);
             progressLabel.Text = "Update Complete";
-            
+
             // Remove ZIP after Extracting
             File.Delete(_downloadedFile);
             _renderTimer.Stop();
@@ -147,7 +143,7 @@ namespace Launcher {
                 Console.WriteLine(clientZip);
                 Console.WriteLine(filesToZip);
                 //Compression.AddToArchive(clientZip, filesToZip);
-            
+
             } catch (IOException) {
                 MessageBox.Show("File is already in use. \nPlease close the game before repairing it.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 // Make sure to remove leftovers
@@ -163,7 +159,7 @@ namespace Launcher {
                 progressLabel.Text = "No missing files detected, everything is up-to-date.";
                 return;
             }
-                
+
 
             Console.WriteLine("Hash differs, download latest patch.");
             Download();
@@ -179,7 +175,7 @@ namespace Launcher {
             Console.WriteLine("Client: " + clientHash);
             Console.WriteLine("Server: " + _serverMD5);
             Console.WriteLine("---------------------------------");
-            
+
 
             // Close & Clean up
             streamClient.Close();
@@ -191,7 +187,7 @@ namespace Launcher {
 
         // Gets the Version and MD5 of the latest patch
         private void GetServerVersion() {
-            char[] ignoreChars = {'-'};
+            char[] ignoreChars = { '-' };
             string text;
             string[] data;
 
@@ -243,11 +239,24 @@ namespace Launcher {
             return Math.Round(data, 3).ToString() + byteType;
         }
 
+        // When switching launcher's game
+        private void SelectGame(Game game) {
+            Console.WriteLine("Game: " + game.ToString());
+            _currentGame = game;
 
-        // Clicks
+            _gameDir = _currentGame.Directory;
+            _gameExe = _currentGame.Executable;
+            _gameWeb = _currentGame.WebsiteURL;
+            _gameSource = _currentGame.SourceURL;
+
+            webBrowser.Url = new Uri(_currentGame.Newsfeed);
+        }
+
+
+        // Form Button click events
 
         private void playButton_Click(object sender, EventArgs e) {
-            // Download instead of play
+            // Check for update
             if (_UpdateAvailable) {
                 Download();
                 return;
@@ -257,21 +266,57 @@ namespace Launcher {
             Process.Start(_gameExe);
             Application.Exit();
         }
+
+
+        private void Test() {
+            
+        }
+
+        /*   HEADER BUTTONS   */
+
+        // Open Portfolio
         private void portfolioButton_Click(object sender, EventArgs e) {
-            // Open Portfolio
             Process.Start(_portfolio);
         }
+        // Open Game Website
         private void gameSiteButton_Click(object sender, EventArgs e) {
-            // Open Game Website
-            Process.Start(_gameSie);
+            Process.Start(_gameWeb);
         }
+        // Open Source Code
         private void githubButton_Click(object sender, EventArgs e) {
-            // Open Source Code
-            Process.Start(_github);
+            Process.Start(_gameSource);
         }
+        // Repair game files
         private void repairButton_Click(object sender, EventArgs e) {
-            // Repair game files
             CheckFiles();
+        }
+
+
+        /*   GAME SELECTION   */
+
+        // Kingdom of Madness
+        private void GameButton_01_Click(object sender, EventArgs e) {
+            SelectGame(new KingdomOfMadness());
+        }
+        // Space Shooter
+        private void GameButton_02_Click(object sender, EventArgs e) {
+            SelectGame(new SpaceShooter());
+        }
+        // Placeholder Game
+        private void GameButton_03_Click(object sender, EventArgs e) {
+            SelectGame(new Game());
+        }
+        // Placeholder Game
+        private void GameButton_04_Click(object sender, EventArgs e) {
+            SelectGame(new Game());
+        }
+        // Placeholder Game
+        private void GameButton_05_Click(object sender, EventArgs e) {
+            SelectGame(new Game());
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e) {
+
         }
     }
 }

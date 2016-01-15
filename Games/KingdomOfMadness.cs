@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Games {
+﻿namespace Launcher.Games {
     class KingdomOfMadness : Game {
 
         public KingdomOfMadness() {
-            executable      = "test1";
-            directory       = "test2";
-            websiteURL      = "test3";
-            serverURL       = "test4";
-            serverPatchURL  = "test5";
-            githubURL       = "test6";
+            //executable      = "test1_KoM";
+            //directory       = "test2_KoM";
+            //websiteURL      = "test3_KoM";
+            //serverURL       = "test4_KoM";
+            //serverPatchURL  = "test5_KoM";
+            sourceURL       = "https://github.com/BeauArthurs/KingdomOfMadness";
+            newsfeed        = "http://127.0.0.1/launcher/kom.php";
         }
 
     }

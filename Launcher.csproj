@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Games\Game.cs" />
+    <Compile Include="Games\SpaceShooter.cs" />
     <Compile Include="Games\KingdomOfMadness.cs" />
     <Compile Include="Launcher.cs">
       <SubType>Form</SubType>
@@ -146,6 +147,9 @@
       <Project>{b3b36f1c-8ff2-42bb-a9ab-a952f9b11f35}</Project>
       <Name>ImprovedCompression</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\header_logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\cef.redist.x64.3.2454.1344\build\cef.redist.x64.targets" Condition="Exists('packages\cef.redist.x64.3.2454.1344\build\cef.redist.x64.targets')" />

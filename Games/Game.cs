@@ -1,4 +1,5 @@
 ﻿using System;
+using Launcher.Server;
 
 namespace Launcher.Games {
     class Game {
@@ -6,11 +7,12 @@ namespace Launcher.Games {
         // Default values, override them!
         protected string executable     = "placeholder.exe";
         protected string directory      = System.Windows.Forms.Application.StartupPath + @"\game\";
-        protected string websiteURL     = "http://boyvoesten.com/";
-        protected string serverURL      = "http://localhost/GetVersion.php";
-        protected string serverPatchURL = "http://localhost/patches/";
-        protected string sourceURL      = "https://github.com/221boy221";
-        protected string newsfeed       = "http://127.0.0.1/launcher/placeholder.php";
+        protected string sourceURL      = "221boy221";
+        // They all start at HostInfo.domain's root
+        protected string websiteURL     = "";
+        protected string serverURL      = "GetVersion.php";
+        protected string serverPatchURL = "patches/";
+        protected string newsfeed       = "placeholder.php";
 
 
         // Getters
@@ -29,31 +31,31 @@ namespace Launcher.Games {
 
         public string WebsiteURL {
             get {
-                return websiteURL;
+                return HostInfo.domain + websiteURL;
             }
         }
 
         public string ServerURL {
             get {
-                return serverURL;
+                return HostInfo.domain + serverURL;
             }
         }
 
         public string ServerPatchURL {
             get {
-                return serverPatchURL;
+                return HostInfo.domain + serverPatchURL;
             }
         }
 
         public string SourceURL {
             get {
-                return sourceURL;
+                return HostInfo.github + sourceURL;
             }
         }
 
         public string Newsfeed {
             get {
-                return newsfeed;
+                return HostInfo.domain + newsfeed;
             }
         }
     }

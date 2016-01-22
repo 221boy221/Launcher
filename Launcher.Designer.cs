@@ -39,8 +39,10 @@
             this.repairButton = new System.Windows.Forms.Button();
             this.githubButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.gameHeaderLogo = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gameHeaderLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // playButton
@@ -68,6 +70,9 @@
             // 
             // webBrowser
             // 
+            this.webBrowser.AllowNavigation = false;
+            this.webBrowser.AllowWebBrowserDrop = false;
+            this.webBrowser.IsWebBrowserContextMenuEnabled = false;
             this.webBrowser.Location = new System.Drawing.Point(134, 72);
             this.webBrowser.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
@@ -174,6 +179,7 @@
             this.tableLayoutPanel1.Controls.Add(this.githubButton, 4, 0);
             this.tableLayoutPanel1.Controls.Add(this.gameSiteButton, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.pictureBox1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.gameHeaderLogo, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -212,11 +218,20 @@
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox1.BackgroundImage = global::Launcher.Properties.Resources.header_logo;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox1.Location = new System.Drawing.Point(9, 13);
+            this.pictureBox1.Location = new System.Drawing.Point(17, 14);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(182, 39);
+            this.pictureBox1.Size = new System.Drawing.Size(166, 37);
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
+            // 
+            // gameHeaderLogo
+            // 
+            this.gameHeaderLogo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gameHeaderLogo.Location = new System.Drawing.Point(204, 3);
+            this.gameHeaderLogo.Name = "gameHeaderLogo";
+            this.gameHeaderLogo.Size = new System.Drawing.Size(373, 60);
+            this.gameHeaderLogo.TabIndex = 7;
+            this.gameHeaderLogo.TabStop = false;
             // 
             // Launcher
             // 
@@ -243,6 +258,7 @@
             this.Load += new System.EventHandler(this.Launcher_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gameHeaderLogo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -265,6 +281,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button githubButton;
         private System.Windows.Forms.Button repairButton;
+        private System.Windows.Forms.PictureBox gameHeaderLogo;
     }
 }
 

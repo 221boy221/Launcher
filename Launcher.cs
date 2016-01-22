@@ -9,11 +9,14 @@ using System.IO.Compression;
 using System.Collections.Generic;
 using ExtendedZipFiles;
 using Launcher.Games;
+using Launcher.Client;
+using Launcher.Server;
 
 // Boy Voesten
 // TODO: 
 //      Replace hardcoded file paths
 //      Improve MD5 Repair file comparison (checksum?)
+//      Fix all URLs to Host instead of Xampp
 
 namespace Launcher {
     public partial class Launcher : Form {
@@ -29,7 +32,7 @@ namespace Launcher {
         private string _versionFile = "game.version";
         private string _currentVersion = "0.0";
         private string _serverVersion;
-        private string _portfolio = "http://boyvoesten.com/";
+        private string _portfolio = HostInfo.portfolio;
         private string _fileToDownload;
         private string _downloadedFile;
         private string _serverMD5;
@@ -60,7 +63,7 @@ namespace Launcher {
                 _currentVersion = File.ReadAllText(_versionFile);
 
             // Get the latest version number
-            //GetServerVersion();
+            GetServerVersion();
 
             // Compare client version with server version
             CheckForUpdates();
@@ -69,12 +72,12 @@ namespace Launcher {
         // Check if the client requires an update
         private void CheckForUpdates() {
             if (_currentVersion != _serverVersion) {
-                progressLabel.Text = "There is a new version available!";
+                progressLabel.Text = Notifications.UPDATE_AVAILEBALE;
                 Console.WriteLine(progressLabel.Text);
                 _UpdateAvailable = true;
                 playButton.Text = "Update";
             } else {
-                progressLabel.Text = "All files are Up-To-Date";
+                progressLabel.Text = Notifications.UP_TO_DATE;
                 Console.WriteLine(progressLabel.Text);
                 _UpdateAvailable = false;
                 playButton.Text = "Play";
@@ -93,7 +96,8 @@ namespace Launcher {
             if (File.Exists(_downloadedFile))
                 File.Delete(_downloadedFile);
 
-            Console.WriteLine("Starting download...");
+            Console.WriteLine(Notifications.UPDATE_START);
+            progressLabel.Text = Notifications.UPDATE_BUSY;
 
             // Download ZIP from server
             WebClient client = new WebClient();
@@ -111,7 +115,9 @@ namespace Launcher {
 
         // Done downloading
         private void DownloadComplete(object sender, AsyncCompletedEventArgs e) {
-            Console.WriteLine("Download Completed");
+            Console.WriteLine(Notifications.UPDATE_COMPLETE);
+            progressLabel.Text = Notifications.UPDATE_COMPLETE;
+
             // Update client version number
             _currentVersion = _serverVersion;
             File.WriteAllText(_versionFile, _currentVersion);
@@ -120,9 +126,9 @@ namespace Launcher {
             UpdateUI();
 
             // Extract downloaded ZIP
-            progressLabel.Text = "Extracting Files...";
+            progressLabel.Text = Notifications.EXTRACT_BUSY;
             Compression.ImprovedExtractToDirectory(_downloadedFile, _gameDir, Compression.Overwrite.Always);
-            progressLabel.Text = "Update Complete";
+            progressLabel.Text = Notifications.EXTRACT_COMPLETE;
 
             // Remove ZIP after Extracting
             File.Delete(_downloadedFile);
@@ -134,7 +140,9 @@ namespace Launcher {
             string clientZip = Application.StartupPath + "\\temp.zip";
             List<string> filesToZip = new List<string>();
 
-            progressLabel.Text = "Repairing game files - This could take a while...";
+            Console.WriteLine(Notifications.REPAIR_BUSY);
+            progressLabel.Text = Notifications.REPAIR_BUSY;
+
             GetServerVersion();
             filesToZip.Add(_gameDir);
 
@@ -143,9 +151,8 @@ namespace Launcher {
                 Console.WriteLine(clientZip);
                 Console.WriteLine(filesToZip);
                 //Compression.AddToArchive(clientZip, filesToZip);
-
             } catch (IOException) {
-                MessageBox.Show("File is already in use. \nPlease close the game before repairing it.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Notifications.FILE_IN_USE, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 // Make sure to remove leftovers
                 if (!File.Exists(clientZip))
                     return;
@@ -155,11 +162,13 @@ namespace Launcher {
 
             Application.DoEvents();
 
+            // If file does not differ from server file
             if (CompareMD5(clientZip)) {
-                progressLabel.Text = "No missing files detected, everything is up-to-date.";
+                progressLabel.Text = Notifications.REPAIR_NO;
                 return;
             }
 
+            progressLabel.Text = Notifications.REPAIR_YES;
 
             Console.WriteLine("Hash differs, download latest patch.");
             Download();
@@ -176,13 +185,11 @@ namespace Launcher {
             Console.WriteLine("Server: " + _serverMD5);
             Console.WriteLine("---------------------------------");
 
-
             // Close & Clean up
             streamClient.Close();
             File.Delete(clientZip);
 
             return clientHash == _serverMD5;
-
         }
 
         // Gets the Version and MD5 of the latest patch
@@ -213,7 +220,7 @@ namespace Launcher {
         }
 
         private void UpdateUI() {
-            progressLabel.Text = "Downloading... " + FormatBytes(_byteIndex) + " / " + FormatBytes(_bytesTotal);
+            progressLabel.Text = Notifications.UPDATE_BUSY + FormatBytes(_byteIndex) + " / " + FormatBytes(_bytesTotal);
             progressBar1.Value = _progressValue;
         }
 
@@ -244,12 +251,15 @@ namespace Launcher {
             Console.WriteLine("Game: " + game.ToString());
             _currentGame = game;
 
-            _gameDir = _currentGame.Directory;
-            _gameExe = _currentGame.Executable;
-            _gameWeb = _currentGame.WebsiteURL;
-            _gameSource = _currentGame.SourceURL;
+            _gameDir        = _currentGame.Directory;
+            _gameExe        = _currentGame.Executable;
+            _gameSource     = _currentGame.SourceURL;
+            _gameWeb        = _currentGame.WebsiteURL;
+            _serverURL      = _currentGame.ServerURL;
+            _serverPatchURL = _currentGame.ServerPatchURL;
 
             webBrowser.Url = new Uri(_currentGame.Newsfeed);
+            Console.WriteLine(_currentGame.Newsfeed);
         }
 
 
@@ -267,10 +277,6 @@ namespace Launcher {
             Application.Exit();
         }
 
-
-        private void Test() {
-            
-        }
 
         /*   HEADER BUTTONS   */
 
